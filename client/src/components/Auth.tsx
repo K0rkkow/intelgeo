@@ -1,5 +1,5 @@
 import { useState } from "react";
-const API = import.meta.env.VITE_API_URL || "";
+import { API } from "../lib/api";
 
 export function Auth({ onAuth }: { onAuth: (token: string, user: any) => void }) {
   const [mode, setMode] = useState<"login"|"register">("register");

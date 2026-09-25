@@ -7,7 +7,7 @@ import { Game } from "./pages/Game";
 import { Results } from "./pages/Results";
 import { Auth } from "./components/Auth";
 import { Leaderboard } from "./pages/Leaderboard";
-import { apiStartGame } from "./lib/api";
+import { apiStartGame, API } from "./lib/api";
 import type { PublicRound, GuessResult } from "./types/game";
 import { saveGameResult } from "./lib/progression";
 
@@ -65,10 +65,9 @@ export default function App() {
     saveGameResult(total, avg, res.length);
     const best = Number(localStorage.getItem("intelgeo_best") || "0");
     if (total > best) localStorage.setItem("intelgeo_best", String(total));
-    // sync serveur si connecté
     const token = localStorage.getItem("intelgeo_token");
     if (token) {
-      try { await fetch(`${import.meta.env.VITE_API_URL || ""}/api/auth/submit`, { method:"POST", headers:{"Content-Type":"application/json", Authorization:`Bearer ${token}`}, body: JSON.stringify({ totalScore: total, avgDistance: avg, rounds: res.length }) }); } catch {}
+      try { await fetch(`${API}/api/auth/submit`, { method:"POST", headers:{"Content-Type":"application/json", Authorization:`Bearer ${token}`}, body: JSON.stringify({ totalScore: total, avgDistance: avg, rounds: res.length }) }); } catch {}
     }
     setScreen("results");
   };

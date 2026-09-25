@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-const API = import.meta.env.VITE_API_URL || "";
+import { API } from "../lib/api";
 const CONTINENTS = ["Europe","Asie","Afrique","Amérique du Nord","Amérique du Sud","Océanie"] as const;
 const RANKS: Record<string, string> = { Bronze: "🥉", Argent: "🥈", Or: "🥇", Platine: "💎", Diamant: "👑" };
 

@@ -1,4 +1,5 @@
-const API = import.meta.env.VITE_API_URL || "";
+const raw = (import.meta.env.VITE_API_URL as string) || "";
+export const API = raw.includes("localhost") && typeof window !== "undefined" && window.location.hostname !== "localhost" && window.location.hostname !== "127.0.0.1" ? "" : raw;
 
 export async function apiStartGame(cfg: { rounds: number; timeLimit: number; region: string; difficulty: string }) {
   const res = await fetch(`${API}/api/game/start`, {

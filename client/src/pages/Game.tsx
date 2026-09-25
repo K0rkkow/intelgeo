@@ -3,7 +3,7 @@ import { StreetView } from "../components/StreetView";
 import { GuessMap } from "../components/GuessMap";
 import { useTimer } from "../hooks/useTimer";
 import type { PublicRound, GuessResult } from "../types/game";
-import { apiGuess } from "../lib/api";
+import { apiGuess, API } from "../lib/api";
 import { playPlace, playValidate, playResult, sounds } from "../lib/sounds";
 
 function fmt(sec: number) {
@@ -68,9 +68,8 @@ export function Game({ initial, gameId, lang = "fr", level = 2, onFinish, onAbor
   }, [loading, tips.length]);
 
   const handleNeedNew = useCallback(async () => {
-    // échec Street View → nouvelle localisation valide sans lancer le chrono
     try {
-      const res = await fetch(`${import.meta.env.VITE_API_URL || ""}/api/game/start`, {
+      const res = await fetch(`${API}/api/game/start`, {
         method: "POST", headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ rounds: 1, timeLimit: round.timeLimit, region: "world", difficulty: "expert" })
       });
@@ -79,7 +78,6 @@ export function Game({ initial, gameId, lang = "fr", level = 2, onFinish, onAbor
       setRound(prev => ({ ...prev, pano: data.pano, imageUrl: data.imageUrl }));
       setStreetReady(false); setMapReady(false); setReady(false);
     } catch {
-      // si échec réseau, on garde l'image fallback déjà affichée
       setStreetReady(true);
     }
   }, [round.timeLimit]);
@@ -101,14 +99,12 @@ export function Game({ initial, gameId, lang = "fr", level = 2, onFinish, onAbor
     }
   }, [isFullyReady, loading, ready]);
 
-  // timeout : si bloqué >12s → nouvelle localisation (jamais d'écran cassé)
   useEffect(() => {
     if (!loading || isFullyReady) return;
     const to = setTimeout(async () => {
       if (!loading || isFullyReady) return;
-      // tentative de nouvelle localisation propre
       try {
-        const res = await fetch(`${import.meta.env.VITE_API_URL || ""}/api/game/start`, {
+        const res = await fetch(`${API}/api/game/start`, {
           method: "POST", headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ rounds: 1, timeLimit: round.timeLimit, region: "world", difficulty: "expert" })
         });

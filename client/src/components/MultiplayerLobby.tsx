@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-const API = import.meta.env.VITE_API_URL || "";
+import { API } from "../lib/api";
 export function MultiplayerLobby({ initialCode, onStartGame, onBack }: { initialCode?: string | null; onStartGame: (gameId: string, firstRound: any) => void; onBack: () => void }) {
   const [mode, setMode] = useState<"choice" | "create" | "join">(initialCode ? "create" : "choice");
   const [code, setCode] = useState(initialCode || "");
