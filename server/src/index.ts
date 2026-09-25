@@ -14,7 +14,8 @@ const app = express();
 const PORT = Number(process.env.PORT) || 3001;
 const CORS_ORIGIN = process.env.CORS_ORIGIN || "http://localhost:5173";
 
-app.use(cors({ origin: CORS_ORIGIN, credentials: true }));
+const isVercel = !!process.env.VERCEL;
+app.use(cors({ origin: isVercel ? true : CORS_ORIGIN, credentials: true }));
 app.use(express.json());
 
 app.get("/api/health", (_req, res) => res.json({ ok: true, version: "1.0.0" }));
@@ -40,7 +41,11 @@ app.use((err: unknown, _req: express.Request, res: express.Response, _next: expr
   res.status(500).json({ error: "Internal server error" });
 });
 
-app.listen(PORT, () => {
-  console.log(`[server] listening on http://localhost:${PORT}`);
-  console.log(`[server] CORS origin: ${CORS_ORIGIN}`);
-});
+export default app;
+
+if (!isVercel) {
+  app.listen(PORT, () => {
+    console.log(`[server] listening on http://localhost:${PORT}`);
+    console.log(`[server] CORS origin: ${CORS_ORIGIN}`);
+  });
+}
