@@ -183,18 +183,17 @@ export function Game({ initial, gameId, lang = "fr", level = 2, onFinish, onAbor
           <div className="absolute top-16 left-1/2 -translate-x-1/2 z-10 bg-black/55 backdrop-blur text-white rounded-full px-4 py-1.5 text-xs font-bold tracking-wide border border-white/10 pointer-events-none">Trouvez la localisation de cette scène</div>
         )}
 
-        {/* ZONE B — CARTE INDÉPENDANTE (ne touche jamais la vue immersive) */}
-        <div className="hidden lg:block absolute top-4 right-4 bottom-28 w-[380px] z-20 pointer-events-none">
-          <div className="w-full h-full rounded-2xl overflow-hidden shadow-[0_12px_40px_rgba(0,0,0,0.45)] border border-black/10 bg-white pointer-events-auto relative">
-            <GuessMap lang={lang} guess={guess} onPick={handlePick} onReady={handleMapReady} result={lastResult ? { real: lastResult.realLocation, guess: lastResult.guessLocation } : null} />
-            {phase === "playing" && !guess && <div className="absolute top-3 left-3 right-12 bg-white/95 backdrop-blur rounded-full shadow border border-black/5 px-3 py-2 text-xs font-bold text-center pointer-events-none z-10">Clique sur la carte pour placer ton point</div>}
-          </div>
-        </div>
-        {/* VALIDATION — conteneur indépendant, toujours visible, jamais derrière la carte */}
-        <div className="hidden lg:block absolute bottom-4 right-4 w-[380px] z-30 pointer-events-none">
-          <div className="rounded-2xl bg-white p-3 shadow-[0_8px_24px_rgba(0,0,0,0.25)] border border-black/5 pointer-events-auto">
-            <button disabled={!guess || phase !== "playing" || submitting} onClick={() => doGuess(remaining)} className="w-full h-11 rounded-full bg-[#ff1a1a] hover:bg-[#e10600] disabled:bg-black/10 disabled:text-black/30 text-white font-black tracking-widest text-xs transition">VÉRIFIER</button>
-            <div className="mt-2 text-center font-mono text-[11px] text-black/40">{guess ? `${guess.lat.toFixed(4)}, ${guess.lng.toFixed(4)}` : "Aucun point placé"}</div>
+        {/* ZONE B — CARTE + VÉRIFIER (comme avant, compact) */}
+        <div className="hidden lg:block absolute top-4 right-4 bottom-4 w-[380px] z-20">
+          <div className="w-full h-full rounded-2xl overflow-hidden shadow-[0_12px_40px_rgba(0,0,0,0.45)] border border-black/10 bg-white flex flex-col">
+            <div className="flex-1 relative min-h-0">
+              <GuessMap lang={lang} guess={guess} onPick={handlePick} onReady={handleMapReady} result={lastResult ? { real: lastResult.realLocation, guess: lastResult.guessLocation } : null} />
+              {phase === "playing" && !guess && <div className="absolute top-3 left-3 right-12 bg-white/95 backdrop-blur rounded-full shadow border border-black/5 px-3 py-2 text-xs font-bold text-center pointer-events-none z-10">Clique sur la carte pour placer ton point</div>}
+            </div>
+            <div className="p-3 bg-white border-t border-black/5 shrink-0">
+              <button disabled={!guess || phase !== "playing" || submitting} onClick={() => doGuess(remaining)} className="w-full h-11 rounded-full bg-[#ff1a1a] hover:bg-[#e10600] disabled:bg-black/10 disabled:text-black/30 text-white font-black tracking-widest text-xs transition">VÉRIFIER</button>
+              <div className="mt-2 text-center font-mono text-[11px] text-black/40">{guess ? `${guess.lat.toFixed(4)}, ${guess.lng.toFixed(4)}` : "Aucun point placé"}</div>
+            </div>
           </div>
         </div>
 
