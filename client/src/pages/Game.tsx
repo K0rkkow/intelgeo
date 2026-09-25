@@ -153,15 +153,15 @@ export function Game({ initial, gameId: initialGameId, lang = "fr", level = 2, o
 
   return (
     <div className="h-[100dvh] flex flex-col bg-[#050507] text-white">
-      <header className="h-14 shrink-0 bg-[#0c0c0e] border-b border-white/10 flex items-center justify-between px-3 md:px-4 z-30">
+      <header className="h-[62px] shrink-0 bg-[#0c0c0e] border-b border-white/10 flex items-center justify-between px-4 md:px-5 z-30">
         <div className="flex items-center gap-3">
-          <span className="font-mono text-xs tracking-widest">ROUND <b>{round.round}/{round.totalRounds}</b></span>
-          <span className={`font-mono text-sm px-3 py-1.5 rounded-full border font-bold ${loading || countdown!==null ? "bg-white/10 border-white/10 text-white/50" : urgent ? "bg-[#ff1a1a] border-[#ff1a1a] text-white animate-pulse" : "bg-white text-black border-white"}`}>{loading || countdown!==null ? "00:00" : fmt(remaining)}</span>
-          <button onClick={toggleSound} className="w-8 h-8 rounded-full bg-white/10 grid place-items-center text-xs hover:bg-white/20 transition" aria-label="Son">{soundOn ? "🔊" : "🔇"}</button>
+          <span className="font-mono text-sm tracking-[0.14em] bg-white text-black px-3 py-1.5 rounded-full font-black">ROUND {round.round}/{round.totalRounds}</span>
+          <span className={`font-mono text-[15px] px-4 py-1.5 rounded-full border-2 font-black tracking-wide ${loading || countdown!==null ? "bg-white/10 border-white/10 text-white/50" : urgent ? "bg-[#ff1a1a] border-[#ff1a1a] text-white animate-pulse shadow-[0_0_16px_rgba(255,26,26,0.4)]" : "bg-white text-black border-white shadow"}`}>{loading || countdown!==null ? "00:00" : fmt(remaining)}</span>
+          <button onClick={toggleSound} className="w-9 h-9 rounded-full bg-white/10 grid place-items-center text-sm hover:bg-white/20 transition border border-white/5" aria-label="Son">{soundOn ? "🔊" : "🔇"}</button>
         </div>
         <button onClick={onAbort} className="flex items-center gap-2 hover:opacity-80 transition">
-          <span className="font-black tracking-[0.18em] text-xs hidden sm:inline">INTELGEO</span>
-          <img src="/logo.jpg" alt="IntelGeo" className="w-8 h-8 rounded-full border border-white/10" />
+          <span className="font-black tracking-[0.18em] text-sm hidden sm:inline">INTELGEO</span>
+          <img src="/logo.jpg" alt="IntelGeo" className="w-9 h-9 rounded-full border border-white/10 shadow" />
         </button>
       </header>
 
@@ -192,16 +192,20 @@ export function Game({ initial, gameId: initialGameId, lang = "fr", level = 2, o
           <div className="absolute top-16 left-1/2 -translate-x-1/2 z-10 bg-black/55 backdrop-blur text-white rounded-full px-4 py-1.5 text-xs font-bold tracking-wide border border-white/10 pointer-events-none">Trouvez la localisation de cette scène</div>
         )}
 
-        {/* ZONE B — CARTE + VÉRIFIER (comme avant, compact) */}
-        <div className="hidden lg:block absolute top-4 right-4 bottom-4 w-[380px] z-20">
-          <div className="w-full h-full rounded-2xl overflow-hidden shadow-[0_12px_40px_rgba(0,0,0,0.45)] border border-black/10 bg-white flex flex-col">
-            <div className="flex-1 relative min-h-0">
-              <GuessMap lang={lang} guess={guess} onPick={handlePick} onReady={handleMapReady} result={lastResult ? { real: lastResult.realLocation, guess: lastResult.guessLocation } : null} />
-              {phase === "playing" && !guess && <div className="absolute top-3 left-3 right-12 bg-white/95 backdrop-blur rounded-full shadow border border-black/5 px-3 py-2 text-xs font-bold text-center pointer-events-none z-10">Clique sur la carte pour placer ton point</div>}
+        {/* ZONE B — CARTE + VÉRIFIER — bien différenciée de l'image */}
+        <div className="hidden lg:block absolute top-4 right-4 bottom-4 w-[400px] z-20">
+          <div className="w-full h-full rounded-[20px] overflow-hidden shadow-[0_16px_48px_rgba(0,0,0,0.5)] border-2 border-white/20 bg-white flex flex-col">
+            <div className="h-9 bg-[#050507] text-white flex items-center justify-between px-4 shrink-0">
+              <span className="font-mono text-[10px] tracking-[0.2em]">CARTE • PLACE TON POINT</span>
+              <span className="w-2 h-2 rounded-full bg-[#ff1a1a] animate-pulse" />
             </div>
-            <div className="p-3 bg-white border-t border-black/5 shrink-0">
-              <button disabled={!guess || phase !== "playing" || submitting} onClick={() => doGuess(remaining)} className="w-full h-11 rounded-full bg-[#ff1a1a] hover:bg-[#e10600] disabled:bg-black/10 disabled:text-black/30 text-white font-black tracking-widest text-xs transition">VÉRIFIER</button>
-              <div className="mt-2 text-center font-mono text-[11px] text-black/40">{guess ? `${guess.lat.toFixed(4)}, ${guess.lng.toFixed(4)}` : "Aucun point placé"}</div>
+            <div className="flex-1 relative min-h-0 bg-[#e5e3df]">
+              <GuessMap lang={lang} guess={guess} onPick={handlePick} onReady={handleMapReady} result={lastResult ? { real: lastResult.realLocation, guess: lastResult.guessLocation } : null} />
+              {phase === "playing" && !guess && <div className="absolute top-3 left-3 right-3 bg-[#ff1a1a] text-white rounded-full shadow-lg border border-white/20 px-3 py-2 text-xs font-black text-center pointer-events-none z-10">📍 CLIQUE OÙ TU PENSES ÊTRE</div>}
+            </div>
+            <div className="p-4 bg-white border-t-2 border-black/5 shrink-0">
+              <button disabled={!guess || phase !== "playing" || submitting} onClick={() => doGuess(remaining)} className="w-full h-[52px] rounded-full bg-[#ff1a1a] hover:bg-[#e10600] disabled:bg-black/10 disabled:text-black/30 text-white font-black tracking-[0.14em] text-sm transition shadow-[0_4px_16px_rgba(255,26,26,0.3)] border-2 border-transparent hover:border-white/20">VÉRIFIER →</button>
+              <div className="mt-2 text-center font-mono text-xs font-bold text-black/50">{guess ? `📍 ${guess.lat.toFixed(4)}, ${guess.lng.toFixed(4)}` : "Aucun point placé — clique sur la carte"}</div>
             </div>
           </div>
         </div>
