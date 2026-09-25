@@ -192,17 +192,7 @@ export function StreetView({ lat, lng, imageUrl, level = 2, onReady, onMove, onN
           </div>
         </div>
       )}
-      {/* Flèches Street View : belles, visibles seulement quand on peut vraiment bouger */}
-      {(mode==="mapillary" || mode==="panoramax") && (
-      <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-20 flex items-center gap-2">
-        <button onClick={()=>doMove("left")} className="w-12 h-12 rounded-full bg-white/90 backdrop-blur border border-black/5 shadow-[0_4px_16px_rgba(0,0,0,0.25)] grid place-items-center text-lg hover:bg-white hover:scale-105 active:scale-95 transition">←</button>
-        <div className="flex flex-col gap-1">
-          <button onClick={()=>doMove("forward")} disabled={atLimit} className={`w-12 h-12 rounded-full backdrop-blur border shadow grid place-items-center text-lg transition ${atLimit ? "bg-black/20 text-white/30 border-white/10 cursor-not-allowed" : "bg-white/90 border-black/5 hover:bg-white hover:scale-105 active:scale-95"}`}>↑</button>
-          <button onClick={()=>doMove("back")} disabled={atLimit} className={`w-12 h-12 rounded-full backdrop-blur border shadow grid place-items-center text-lg transition ${atLimit ? "bg-black/20 text-white/30 border-white/10 cursor-not-allowed" : "bg-white/90 border-black/5 hover:bg-white hover:scale-105 active:scale-95"}`}>↓</button>
-        </div>
-        <button onClick={()=>doMove("right")} className="w-12 h-12 rounded-full bg-white/90 backdrop-blur border border-black/5 shadow grid place-items-center text-lg hover:bg-white hover:scale-105 active:scale-95 transition">→</button>
-      </div>
-      )}
+      {null}
       <div className="absolute top-3 left-3 bg-white/90 backdrop-blur rounded-full px-3 py-1 text-[10px] font-bold tracking-widest shadow border border-black/5 pointer-events-none">
         {mode==="panoramax" ? "PANORAMAX" : mode==="mapillary" ? "STREET VIEW" : "VUE IMMERSIVE"}
       </div>
