@@ -47,6 +47,7 @@ export function Home({ onPlay, onMultiplayer, onBoard }: { onPlay: () => void; o
           </div>
           <button onClick={()=> (onBoard ? onBoard() : setShowBoard(true))} className="h-8 px-3 rounded-full bg-white/10 border border-white/10 text-xs font-bold hover:bg-white hover:text-black transition">CLASSEMENT</button>
         </div>
+        <p className="mt-6 text-center font-mono text-[10px] tracking-widest text-white/20">IntelGeo — Enquête géographique • Noir + Rouge • Premium</p>
       </main>
 
       {showHow && (

@@ -29,7 +29,8 @@ export default function App() {
     setShowIntro(false);
     setTimeout(() => {
       const tok = localStorage.getItem("intelgeo_token");
-      setScreen(tok ? "home" : "auth");
+      const guest = localStorage.getItem("intelgeo_guest");
+      setScreen(tok || guest ? "home" : "auth");
     }, 80);
   };
 

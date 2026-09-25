@@ -91,8 +91,17 @@ export function Auth({ onAuth }: { onAuth: (token: string, user: any) => void })
               {mode==="register" ? "CRÉER MON DOSSIER →" : "OUVRIR MON DOSSIER →"}
             </button>
 
+            <button onClick={() => {
+              const guest = "Invité" + Math.floor(Math.random()*900+100);
+              localStorage.setItem("intelgeo_name", guest);
+              localStorage.setItem("intelgeo_guest", "1");
+              onAuth("", { pseudo: guest, continent: "Europe", xp: 0, rank: "Bronze" });
+            }} className="mt-2 w-full h-10 rounded-full border border-white/15 text-white/70 hover:bg-white hover:text-black font-bold text-xs tracking-widest transition">
+              CONTINUER EN INVITÉ →
+            </button>
+
             <div className="mt-3 flex items-center gap-2 text-[10px] font-mono tracking-widest text-white/20 justify-center">
-              <span>○ Chiffré</span><span>•</span><span>○ Classement officiel</span><span>•</span><span>○ Reprise auto</span>
+              <span>○ Classement officiel</span><span>•</span><span>○ Invité = classement local</span>
             </div>
           </div>
         </div>
