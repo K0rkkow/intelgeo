@@ -12,7 +12,8 @@ function fmt(sec: number) {
   return `${m}:${s}`;
 }
 
-export function Game({ initial, gameId, lang = "fr", level = 2, onFinish, onAbort }: { initial: PublicRound; gameId: string; lang?: string; level?: number; onFinish: (results: GuessResult[], cfg: PublicRound) => void; onAbort?: () => void }) {
+export function Game({ initial, gameId: initialGameId, lang = "fr", level = 2, onFinish, onAbort }: { initial: PublicRound; gameId: string; lang?: string; level?: number; onFinish: (results: GuessResult[], cfg: PublicRound) => void; onAbort?: () => void }) {
+  const [gameId, setGameId] = useState(initialGameId);
   const [round, setRound] = useState<PublicRound>(initial);
   const [guess, setGuess] = useState<{ lat: number; lng: number } | null>(null);
   const [phase, setPhase] = useState<"playing" | "revealing">("playing");
@@ -44,12 +45,20 @@ export function Game({ initial, gameId, lang = "fr", level = 2, onFinish, onAbor
     if (sounds.isEnabled()) playValidate();
     setSubmitting(true);
     try {
-      const r = await apiGuess(gameId, { lat: guess.lat, lng: guess.lng, timeRemaining });
+      const r: any = await apiGuess(gameId, { lat: guess.lat, lng: guess.lng, timeRemaining });
+      // stateless Vercel : le serveur renvoie nextGameId pour la manche suivante
+      if (r.nextGameId) setGameId(r.nextGameId);
+      else if (r.nextRound?.gameId) setGameId(r.nextRound.gameId);
       setLastResult(r);
       setPhase("revealing");
       setResults(prev => [...prev, r]);
       playResult(r.score);
-    } catch (e) { alert("Erreur: " + String(e)); }
+    } catch (e: any) {
+      const msg = String(e.message || e);
+      if (msg.includes("Game not found")) {
+        alert("Partie expirée, relance une nouvelle partie.");
+      } else alert("Erreur: " + msg);
+    }
     finally { setSubmitting(false); }
   }, [guess, submitting, phase, gameId]);
 

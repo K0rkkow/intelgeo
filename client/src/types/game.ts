@@ -26,6 +26,7 @@ export interface GuessResult {
   round: number;
   totalRounds: number;
   nextRound: PublicRound | null;
+  nextGameId?: string;
   gameFinished: boolean;
 }
 

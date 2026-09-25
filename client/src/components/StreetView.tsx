@@ -5,16 +5,36 @@ function ImmersiveImage({ src, alt, onReady }: { src: string; alt?: string; onRe
   const [offset, setOffset] = useState({ x: 0, y: 0 });
   const [drag, setDrag] = useState<{ x: number; y: number } | null>(null);
   const [loaded, setLoaded] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const imgRef = useRef<HTMLImageElement>(null);
   const handleLoad = () => { setLoaded(true); onReady?.(); };
-  const onWheel = (e: React.WheelEvent) => { e.preventDefault(); const d = e.deltaY > 0 ? -0.08 : 0.08; setScale(s => Math.min(2.2, Math.max(1, s + d))); };
+  const clamp = (x: number, y: number, s: number) => {
+    const el = containerRef.current;
+    const img = imgRef.current;
+    if (!el || !img) return { x, y };
+    const cw = el.clientWidth, ch = el.clientHeight;
+    const iw = img.naturalWidth || cw * 1.25, ih = img.naturalHeight || ch * 1.25;
+    const dispW = (cw * 1.25) * s;
+    const dispH = (ch * 1.25) * s;
+    // si l'image est panoramique, on limite pour ne jamais voir de noir : max = (disp - container)/2
+    const maxX = Math.max(0, (dispW - cw) / 2);
+    const maxY = Math.max(0, (dispH - ch) / 2);
+    return { x: Math.max(-maxX, Math.min(maxX, x)), y: Math.max(-maxY, Math.min(maxY, y)) };
+  };
+  const onWheel = (e: React.WheelEvent) => {
+    e.preventDefault();
+    const d = e.deltaY > 0 ? -0.08 : 0.08;
+    const ns = Math.min(2.2, Math.max(1, scale + d));
+    setScale(ns);
+    setOffset(o => clamp(o.x, o.y, ns));
+  };
   const onDown = (e: React.MouseEvent) => setDrag({ x: e.clientX - offset.x, y: e.clientY - offset.y });
-  const onMove = (e: React.MouseEvent) => { if (drag) setOffset({ x: e.clientX - drag.x, y: e.clientY - drag.y }); };
+  const onMove = (e: React.MouseEvent) => { if (drag) { const n = clamp(e.clientX - drag.x, e.clientY - drag.y, scale); setOffset(n); } };
   const onUp = () => setDrag(null);
   return (
-    <div className="absolute inset-0 bg-[#0a0a0c] overflow-hidden cursor-grab active:cursor-grabbing select-none" onMouseDown={onDown} onMouseMove={onMove} onMouseUp={onUp} onMouseLeave={onUp} onWheel={onWheel}>
-      <img src={src} alt={alt || "Vue immersive"} draggable={false} onLoad={handleLoad} className={`absolute left-1/2 top-1/2 w-[125%] max-w-none h-auto max-h-[125%] object-cover transition-opacity duration-500 ${loaded?"opacity-100":"opacity-0"}`} style={{ transform: `translate(-50%, -50%) translate(${offset.x}px, ${offset.y}px) scale(${scale})`, transition: drag ? "none" : "transform 0.2s ease" }} />
+    <div ref={containerRef} className="absolute inset-0 bg-[#050507] overflow-hidden cursor-grab active:cursor-grabbing select-none" onMouseDown={onDown} onMouseMove={onMove} onMouseUp={onUp} onMouseLeave={onUp} onWheel={onWheel}>
+      <img ref={imgRef} src={src} alt={alt || "Vue immersive"} draggable={false} onLoad={handleLoad} className={`absolute left-1/2 top-1/2 w-[125%] h-[125%] max-w-none object-cover transition-opacity duration-500 ${loaded?"opacity-100":"opacity-0"}`} style={{ transform: `translate(-50%, -50%) translate(${offset.x}px, ${offset.y}px) scale(${scale})`, transition: drag ? "none" : "transform 0.2s ease" }} />
       {!loaded && <div className="absolute inset-0 grid place-items-center bg-[#050507]"><div className="w-6 h-6 rounded-full border-2 border-white/20 border-t-white animate-spin" /></div>}
-      <div className="absolute bottom-3 left-1/2 -translate-x-1/2 bg-black/60 backdrop-blur rounded-full px-3 py-1 text-[10px] tracking-widest text-white/70">FAIS GLISSER • MOLETTE ZOOM</div>
     </div>
   );
 }

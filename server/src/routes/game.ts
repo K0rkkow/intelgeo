@@ -73,7 +73,6 @@ router.post("/:id/guess", (req, res) => {
 
   if (!isLast) {
     game.currentRound += 1;
-    // reset startedAt for next round
     const next = game.roundsData[game.currentRound];
     if (next) next.startedAt = Date.now();
     nextRound = toPublicRound(game);
@@ -81,7 +80,9 @@ router.post("/:id/guess", (req, res) => {
     game.status = "finished";
   }
 
-  updateGame(game);
+  const newId = updateGame(game);
+  // pour le client stateless, nextRound doit contenir le nouveau gameId
+  if (nextRound) (nextRound as any).gameId = newId;
 
   return res.json({
     distanceKm,
@@ -92,6 +93,7 @@ router.post("/:id/guess", (req, res) => {
     round: round.index + 1,
     totalRounds: game.rounds,
     nextRound,
+    nextGameId: newId,
     gameFinished: isLast,
   });
 });
